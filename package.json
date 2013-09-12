@@ -1,0 +1,16 @@
+{
+  "name": "quest_products_rest-api",
+  "description": "A RESTful api to manage products of your quest",
+  "version": "0.0.1",
+  "author": "Craig Erdmann <erds@badmoondev.com>",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "restify": "2.6.x",
+    "mongoose": "3.6.x"
+  },
+  "devDependencies": {
+    "supertest": "0.7.x",
+    "mocha": "1.12.x",
+    "should": "1.2.x"
+  }
+}
