@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var config = require('./config');
+var config = require('./dbconfig');
 
 var mongoUri = config.credentials.mongoose_auth_local;
 

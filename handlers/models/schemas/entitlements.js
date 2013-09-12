@@ -1,5 +1,4 @@
-module.exports = function ( db ) {
-  db = db || require('../../db.js');
+module.exports = function (db) {
  
   var entitlementSchema = db.Schema({
    

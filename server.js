@@ -4,7 +4,6 @@ var entitlementsHandler = require('./handlers/entitlements.js');
 
 var httpPort = process.env.PORT || 8080;
 
-
 var rest_server = restify.createServer({
     name: 'EntitlementsApi'
 });
@@ -22,7 +21,9 @@ rest_server.pre(restify.pre.userAgentConnection());
 
 var entitlements_path = '/entitlements';
 
-//rest_server.get(entitlements_path, entitlementsHandler.getEntitlements);
+//console.log(entitlementsHandler.getEntitlements());
+
+rest_server.get(entitlements_path, entitlementsHandler.getEntitlements);
 rest_server.post(entitlements_path, entitlementsHandler.postEntitlement);
 
 rest_server.listen(httpPort, function() {
