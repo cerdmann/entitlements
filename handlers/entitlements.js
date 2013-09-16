@@ -8,21 +8,26 @@ var handler = {
       res.header("Access-Control-Allow-Origin", "*"); 
       res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
-      var entitlements = model.get_all();
+      function receiveResponse(response) {
+        console.log(response);
+        res.send(response);
+        return next();
+      }
 
-      res.send(entitlements);
-      return next();
+      model.get_all(receiveResponse);
   },
   postEntitlement: function(req, res, next) {
       console.log('posting ENTITLEMENT handler');
 
-      var new_entitlement = model.add(req.params);
-
-      if (new_entitlement.length > 0) {
-        return next(new restify.InvalidArgumentError(JSON.stringify(new_entitlement)));
+      function receiveResponse(response) {
+        if (response.length > 2) {
+          return next(new restify.InvalidArgumentError(JSON.stringify(response)));
+        }
+        res.send(201);
+        return next();
       }
-      res.send(201);
-      return next();
+
+      model.add(req.params, receiveResponse);
   }
 };
   

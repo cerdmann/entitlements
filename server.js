@@ -21,8 +21,6 @@ rest_server.pre(restify.pre.userAgentConnection());
 
 var entitlements_path = '/entitlements';
 
-//console.log(entitlementsHandler.getEntitlements());
-
 rest_server.get(entitlements_path, entitlementsHandler.getEntitlements);
 rest_server.post(entitlements_path, entitlementsHandler.postEntitlement);
 
