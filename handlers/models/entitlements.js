@@ -5,7 +5,7 @@ var Entitlement = db.model('entitlement', entitlementSchema);
 
 var model = {
   get_all : function(deliver) {
-    console.log('getting all for ENTITLEMENTS model');
+    console.log('ENTITLEMENTS (model) - get_all');
 
     Entitlement.find(function (err, entitlements) {
       if(err) {
@@ -16,36 +16,51 @@ var model = {
       deliver(JSON.stringify(entitlements));
     });
   },
+  get_individual : function (specificId, deliver) {
+    console.log('ENTITLEMENTS (model) - get_individual: %s', specificId);
+  
+    deliver('');
+  },
   add : function(request_params, deliver) {
-    console.log('adding ENTITLEMENT model');
+    console.log('ENTITLEMENTS (model) - add');
 
-    var required_field_errors = []
+    var required_field_errors = {}
+    required_field_errors.message = 'Required field(s) missing';
+    required_field_errors.fields = [];
+
+    function addError(fieldName) {
+      required_field_errors.fields.push(fieldName);
+    }
 
     if (request_params.itemId === undefined) {
-      required_field_errors.push("itemId");
+      addError("itemId");
     }
 
     if (request_params.title === undefined) {
-      required_field_errors.push("title");
+      addError("title");
     }
 
     if(request_params.totalNumberOfUses === undefined) {
-      required_field_errors.push("totalNumberOfUses");
+      addError("totalNumberOfUses");
     }
 
     if(request_params.timesUsed === undefined) {
-      required_field_errors.push("timesUsed");
+      addError("timesUsed");
     }
 
     if(request_params.expiration === undefined) {
-      required_field_errors.push("expiration");
+      addError("expiration");
     }
 
     if(request_params.expired === undefined) {
-      required_field_errors.push("expired");
+      addError("expired");
     }
 
-    if(required_field_errors.length === 0) {
+    if(request_params.user === undefined) {
+      addError("user");
+    }
+
+    if(required_field_errors.fields.length === 0) {
       var entitlement_data = {
         itemId: request_params.itemId,
         title: request_params.title,
@@ -53,16 +68,19 @@ var model = {
         totalNumberOfUses: request_params.totalNumberOfUses,
         timesUsed: request_params.timesUsed,
         expiration: request_params.expiration,
-        expired: request_params.expired
+        expired: request_params.expired,
+        user: request_params.user
       }
 
       var new_entitlement = new Entitlement(entitlement_data);
       new_entitlement.save(function (error, data) {
         if (error) {
           console.log(error);
-          deliver(JSON.stringify(error.errors));
+          deliver(JSON.stringify(error));
         }
-        deliver('{}');
+        else {
+          deliver('{}');
+        }
       });
     }
     else {

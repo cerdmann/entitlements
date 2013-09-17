@@ -32,7 +32,12 @@ module.exports = function (db) {
      expired: {
        type: Boolean,
        required: true
-     }
+     },
+     user: {
+       type: String,
+       required: true,
+       trim: true
+     },
   });
 
   return entitlementSchema;

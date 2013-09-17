@@ -21,7 +21,8 @@ rest_server.pre(restify.pre.userAgentConnection());
 
 var entitlements_path = '/entitlements';
 
-rest_server.get(entitlements_path, entitlementsHandler.getEntitlements);
+rest_server.get(entitlements_path + '/:specificId', entitlementsHandler.getSpecificEntitlement);
+rest_server.get(entitlements_path, entitlementsHandler.getAllEntitlements);
 rest_server.post(entitlements_path, entitlementsHandler.postEntitlement);
 
 rest_server.listen(httpPort, function() {
