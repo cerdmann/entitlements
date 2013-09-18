@@ -24,6 +24,7 @@ var entitlements_path = '/entitlements';
 rest_server.get(entitlements_path + '/:specificId', entitlementsHandler.getSpecificEntitlement);
 rest_server.get(entitlements_path, entitlementsHandler.getAllEntitlements);
 rest_server.post(entitlements_path, entitlementsHandler.postEntitlement);
+rest_server.del(entitlements_path + '/:specificId', entitlementsHandler.deleteEntitlement);
 
 rest_server.listen(httpPort, function() {
   var consoleMessage = '\n A RESTful API for the Quest Products App'

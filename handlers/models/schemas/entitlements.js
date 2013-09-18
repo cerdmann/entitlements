@@ -1,6 +1,7 @@
 module.exports = function (db) {
  
   var entitlementSchema = db.Schema({
+     id: db.Schema.ObjectId,
    
      itemId: {
        type: String,

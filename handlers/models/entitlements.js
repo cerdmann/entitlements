@@ -2,26 +2,38 @@ var db = require('./db.js');
 var entitlementSchema = require('./schemas/entitlements.js')(db);
 var Entitlement = db.model('entitlement', entitlementSchema);
 
+var callback = function(requestName, cb) {
+  return { 
+    deliver: function (error, result) {
+      if(error) {
+        console.log('%s, Error: %s', requestName, JSON.stringify(error));
+        cb(JSON.stringify(error));
+      }
+      else {
+        cb(null, JSON.stringify(result));
+      }
+    } 
+  };
+};       
+
 
 var model = {
-  get_all : function(deliver) {
+  get_all : function(cb) {
     console.log('ENTITLEMENTS (model) - get_all');
-
-    Entitlement.find(function (err, entitlements) {
-      if(err) {
-        console.log('Error: %s', JSON.stringify(err));
-        deliver(JSON.stringify(err));
-      }
-
-      deliver(JSON.stringify(entitlements));
-    });
+ 
+    Entitlement.find(callback('get_all', cb).deliver);   
   },
-  get_individual : function (specificId, deliver) {
-    console.log('ENTITLEMENTS (model) - get_individual: %s', specificId);
+  get_individual : function (specificId, cb) {
+    console.log('ENTITLEMENTS (model) - get_individual: (%s)', specificId);
   
-    deliver('');
+    Entitlement.findById(specificId, callback('get_individual', cb).deliver);
   },
-  add : function(request_params, deliver) {
+  delete: function(specificId, cb) {
+    console.log('ENTITLEMENTS (model) - delete: (%s)', specificId);
+
+    Entitlement.findByIdAndRemove(specificId, callback('delete', cb).deliver);
+  },
+  add : function(request_params, cb) {
     console.log('ENTITLEMENTS (model) - add');
 
     var required_field_errors = {}
@@ -73,18 +85,10 @@ var model = {
       }
 
       var new_entitlement = new Entitlement(entitlement_data);
-      new_entitlement.save(function (error, data) {
-        if (error) {
-          console.log(error);
-          deliver(JSON.stringify(error));
-        }
-        else {
-          deliver('{}');
-        }
-      });
+      new_entitlement.save(callback('add', cb).deliver);
     }
     else {
-      deliver(JSON.stringify(required_field_errors));
+      cb(JSON.stringify(required_field_errors));
     }
   }
 };
