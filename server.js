@@ -20,6 +20,7 @@ rest_server.pre(restify.pre.userAgentConnection());
 //rest_server.use(function(req,res,next) {});
 
 var entitlements_path = '/entitlements';
+var product_path = '/product';
 
 rest_server.get(entitlements_path + '/:specificId', entitlementsHandler.getSpecificEntitlement);
 rest_server.get(entitlements_path, entitlementsHandler.getAllEntitlements);
