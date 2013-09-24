@@ -1,9 +1,9 @@
-var db = require('./db.js');
-var entitlementSchema = require('./schemas/entitlements.js')(db);
-var Entitlement = db.model('entitlement', entitlementSchema);
+var schema = require('./schemas/entitlements.js');
+var db = require('./db.js').entitlements_db;
+var required_field_checker = require('./required_field_checker.js');
 
 var callback = function(requestName, cb) {
-  return { 
+  return {
     deliver: function (error, result) {
       if(error) {
         console.log('%s, Error: %s', requestName, JSON.stringify(error));
@@ -12,69 +12,38 @@ var callback = function(requestName, cb) {
       else {
         cb(null, JSON.stringify(result));
       }
-    } 
+    }
   };
-};       
-
+};
 
 var model = {
   get_all : function(cb) {
     console.log('ENTITLEMENTS (model) - get_all');
- 
-    Entitlement.find(callback('get_all', cb).deliver);   
+
+    db.model('entitlement', schema).find(callback('get_all', cb).deliver);
   },
   get_individual : function (specificId, cb) {
     console.log('ENTITLEMENTS (model) - get_individual: (%s)', specificId);
-  
-    Entitlement.findById(specificId, callback('get_individual', cb).deliver);
+
+    db.model('entitlement', schema).findById(specificId, callback('get_individual', cb).deliver);
   },
   delete: function(specificId, cb) {
     console.log('ENTITLEMENTS (model) - delete: (%s)', specificId);
 
-    Entitlement.findByIdAndRemove(specificId, callback('delete', cb).deliver);
+    db.model('entitlement', schema).findByIdAndRemove(specificId, callback('delete', cb).deliver);
   },
   add : function(request_params, cb) {
     console.log('ENTITLEMENTS (model) - add');
 
-    var required_field_errors = {}
-    required_field_errors.message = 'Required field(s) missing';
-    required_field_errors.fields = [];
+    var required_fields = ['productId', 'title', 'totalNumberOfUses', 'timesUsed', 'expiration', 'expired', 'user'];
 
-    function addError(fieldName) {
-      required_field_errors.fields.push(fieldName);
+    function fields_missing(error) {
+      cb(error);
     }
 
-    if (request_params.itemId === undefined) {
-      addError("itemId");
-    }
-
-    if (request_params.title === undefined) {
-      addError("title");
-    }
-
-    if(request_params.totalNumberOfUses === undefined) {
-      addError("totalNumberOfUses");
-    }
-
-    if(request_params.timesUsed === undefined) {
-      addError("timesUsed");
-    }
-
-    if(request_params.expiration === undefined) {
-      addError("expiration");
-    }
-
-    if(request_params.expired === undefined) {
-      addError("expired");
-    }
-
-    if(request_params.user === undefined) {
-      addError("user");
-    }
-
-    if(required_field_errors.fields.length === 0) {
+    function fields_complete() {
       var entitlement_data = {
-        itemId: request_params.itemId,
+        productId: request_params.productId,
         title: request_params.title,
         description: request_params.description,
         totalNumberOfUses: request_params.totalNumberOfUses,
@@ -82,17 +51,16 @@ var model = {
         expiration: request_params.expiration,
         expired: request_params.expired,
         user: request_params.user
-      }
+      };
+
+      var Entitlement = db.model('entitlement', schema);
 
       var new_entitlement = new Entitlement(entitlement_data);
       new_entitlement.save(callback('add', cb).deliver);
     }
-    else {
-      cb(JSON.stringify(required_field_errors));
-    }
+
+    required_field_checker.check(request_params, required_fields, fields_missing, fields_complete);
   }
 };
 
 module.exports = model;
-
-

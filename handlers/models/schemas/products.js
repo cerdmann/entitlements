@@ -9,7 +9,7 @@ var schema = new Schema({
    required: true,
    trim: true
   },
-  title: {
+  name: {
    type: String,
    required: true,
    trim: true
@@ -17,27 +17,6 @@ var schema = new Schema({
   description: {
    type: String,
    required: false,
-   trim: true
-  },
-  totalNumberOfUses: {
-   type: Number,
-   required: true
-  },
-  timesUsed: {
-   type: Number,
-   required: true
-  },
-  expiration: {
-   type: Date,
-   required: true
-  },
-  expired: {
-   type: Boolean,
-   required: true
-  },
-  user: {
-   type: String,
-   required: true,
    trim: true
   },
 });

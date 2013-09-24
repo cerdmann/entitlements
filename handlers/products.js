@@ -1,9 +1,9 @@
 var restify = require('restify');
-var model = require('./models/entitlements.js');
+var model = require('./models/products.js');
 
 var handler = {
   getAll: function(req, res, next) {
-    console.log('ENTITLEMENTS (handler) - GET all');
+    console.log('PRODUCTS (handler) - GET all');
 
     function receiveResponse(error, result) {
       if(error) {
@@ -18,7 +18,7 @@ var handler = {
   },
   getSpecific: function(req, res, next) {
     var specificId = req.params.specificId;
-    console.log('ENTITLEMENTS (handler) - GET individual (%s)', specificId);
+    console.log('PRODUCTS (handler) - GET individual (%s)', specificId);
 
     function receiveResponse(error, result) {
       if(error) {
@@ -32,7 +32,7 @@ var handler = {
     model.get_individual(specificId, receiveResponse);
   },
   post: function(req, res, next) {
-    console.log('ENTITLEMENTS (handler) - POST');
+    console.log('PRODUCTS (handler) - POST');
 
     function receiveResponse(error, result) {
       if (error) {
@@ -47,7 +47,7 @@ var handler = {
   },
   delete: function(req, res, next) {
     var specificId = req.params.specificId;
-    console.log('ENTITLEMENTS (handler) - DELETE');
+    console.log('PRODUCTS (handler) - DELETE');
 
     function receiveResponse(error, result) {
       if (error) {
