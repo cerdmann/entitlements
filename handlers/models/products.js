@@ -2,7 +2,9 @@ var schema = require('./schemas/products.js');
 var db = require('./db.js').products_db;
 var required_field_checker = require('./required_field_checker.js');
 
-var callback = function(requestName, cb) {
+
+
+var callback = function(requestName, formatter, cb) {
   return {
     deliver: function (error, result) {
       if(error) {
@@ -10,7 +12,7 @@ var callback = function(requestName, cb) {
         cb(JSON.stringify(error));
       }
       else {
-        cb(null, JSON.stringify(result));
+        cb(null, JSON.stringify(formatter(result)));
       }
     }
   };
@@ -25,7 +27,7 @@ var model = {
   get_individual : function (specificId, cb) {
     console.log('PRODUCTS (model) - get_individual: (%s)', specificId);
 
-    db.model('product', schema).findById(specificId, callback('get_individual', cb).deliver);
+    db.model('product', schema).findById(specificId, callback('get_individual',  individual_formatter, cb).deliver);
   },
   delete: function(specificId, cb) {
     console.log('PRODUCTS (model) - delete: (%s)', specificId);
@@ -57,5 +59,33 @@ var model = {
     required_field_checker.check(request_params, required_fields, fields_missing, fields_complete);
   }
 };
+
+function individual_formatter(product) {
+// {
+//   "_links": {
+//     "self": { "href": "/product/987" },
+//     "upsell": [
+//       { "href": "/product/452", "title": "Flower pot" },
+//       { "href": "/product/832", "title": "Hover donkey" }
+//     ]
+//   },
+//   "name": "A product",
+//   "weight": 400,
+//   .. *snip* ..
+// }
+
+  var hal_formatted = {};
+    hal_formatted._links = {};
+      hal_formatted._links.self = {};
+        hal_formatted._links.self.href = '/products/' + product._id;
+    hal_formatted.productId = product.productId;
+    hal_formatted.name = product.name;
+    hal_formatted.description = product.description;
+  return hal_formatted;
+}
+
+function list_formatter(products) {
+
+}
 
 module.exports = model;
